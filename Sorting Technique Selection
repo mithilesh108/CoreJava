@@ -1,0 +1,28 @@
+import java.util.*;
+
+public class Main
+{
+	public static void main(String[] args) {
+		System.out.println("Hello World");
+		int [] arr={3,8,1,7,2};
+		selectionSort(arr);
+	}
+	
+	public static void selectionSort(int[] arr){
+	    System.out.println(Arrays.toString(arr));
+	    int temp,min,len=arr.length;
+	    for(int i = 0; i < len; i++){
+	        min = i;
+	        for(int j = i+1; j < len; j++){
+	            if(arr[min] > arr[j])
+	                min = j;
+	        }
+	        if(min != i){
+	            temp   = arr[i];
+	            arr[i] = arr[min];
+	            arr[min] = temp;
+	        }
+	    }
+	    System.err.println(Arrays.toString(arr));
+	}
+}
