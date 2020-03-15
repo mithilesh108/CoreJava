@@ -10,6 +10,6 @@ data
 .settings/
 */target/
 */WEB_INF/
-.mvnw
+.mvnw/
 
 */.metadata/*
