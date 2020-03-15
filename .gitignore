@@ -1,7 +1,6 @@
 *.class
 target/
 data 
-
 /bin/
 *.log 
 
@@ -9,6 +8,7 @@ data
 .project
 .settings/
 */target/
+*/target/*
 */WEB_INF/
 .mvnw/
 
