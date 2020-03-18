@@ -1,0 +1,30 @@
+import java.util.*;
+
+public class LinearSearchAlgorithm
+{
+	public static void main(String[] args) {
+		System.out.println("Hello World");
+		int[] arr = {3,6,1,9,4,5,13,10};
+		System.out.println(Arrays.toString(arr));
+		int length = arr.length;
+		int data = 213;
+		int val = -1;
+		for(int i = 0; i < length; i++){
+		    if(data == arr[i]){
+		       val = i;
+		       break;
+		    }
+		}
+		if(val != -1)
+		  System.out.println("Data present in Array, Index no is : "+val);
+		else
+		  System.out.println("Data not present in Array");
+	}
+}
+// Time Complixety in Worst-case performance of Linear Search   : O(n)
+// Time Complixety in Average performance of Linear Search      : O(n) 
+// Time Complixety in Best-case performance of Linear Search    : O(1) 
+// Worst-case space complexity                                  : O(1) iterative
+
+
+
