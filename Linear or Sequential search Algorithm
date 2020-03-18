@@ -21,5 +21,6 @@ public class LinearSearchAlgorithm
 }
 // Time Complixety in Worst-case performance of Linear Search   : O(n)
 // Time Complixety in Average performance of Linear Search      : O(n) 
+                                           = sum of all cases/no of case  = 1+2+3+4+.....+n/n =n(n+1)/2n = (n+1)/2
 // Time Complixety in Best-case performance of Linear Search    : O(1) 
 // Worst-case space complexity                                  : O(1) iterative
