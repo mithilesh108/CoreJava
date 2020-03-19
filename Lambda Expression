@@ -1,0 +1,26 @@
+import java.util.*;
+public class Main
+{
+	public static void main(String[] args) {
+	    Emp e = new Emp(){
+	        public void show(){ System.out.println("anonymous obj"); }
+	    };
+	    e.show();
+	    // lambda expression
+		Emp m = () -> System.out.println("lambda expression");
+		m.show();
+	    ArrayList<Integer> arrL = new ArrayList<Integer>(); 
+        arrL.add(1); 
+        arrL.add(2); 
+        arrL.add(3); 
+        arrL.add(4); 
+        for(Integer i  : arrL)
+            System.out.print(i+" ");
+       // Using lambda expression to print all elements 
+        arrL.forEach(n -> System.out.println(n)); 
+	}
+}
+
+interface Emp {
+    void show();
+}
