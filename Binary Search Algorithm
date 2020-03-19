@@ -57,5 +57,52 @@ public class Main
 // Time Complixety in Average performance of Linear Search      : 0(log n)
 // Time Complixety in Best-case performance of Linear Search    : O(1)
 // Worst-case space complexity   : 
+--------------------------------------------------------------------------------------------------------
+import java.util.*;
+public class Main
+{
+	public static void main(String[] args) {
+		System.out.println("Hello World");
+		int [] a = {51, 3, 4, 5, 66, 9, 10, 13};
+		System.out.println(Arrays.toString(a));
+		a = selectionSort(a);
+		System.out.println(Arrays.toString(a));
+		System.out.println(binarySearch(a , 813));
+	}
+	
+	public static int[] selectionSort(int []  arr){
+	    int temp = 0, min = 0;
+	    for(int i = 0; i < arr.length - 1; i++){
+	        min = i;
+	        for(int j = i+1; j < arr.length; j++){
+	            if(arr[min] > arr[j])
+	               min = j;
+	        }
+	        if(min != i){
+	            temp = arr[i];
+	            arr[i] = arr[min];
+	            arr[min] = temp;
+	        }
+	        //System.out.println(Arrays.toString(arr));
+	    }
+	    return arr;
+	}
+	
+
+	public static int binarySearch(int[] a, int data){
+	    int lowerBound = 0, upperBound = a.length - 1;
+	    int mid = 0;
+	    while(upperBound >= lowerBound){
+	        mid = (upperBound + lowerBound) / 2;
+	        if(a[mid] == data)
+	           return mid;
+	       else if(a[mid] > data)
+	           upperBound = mid - 1;
+	       else
+	           lowerBound = mid + 1;
+	    }//while
+	    return -1;
+	}
+}
 
 
