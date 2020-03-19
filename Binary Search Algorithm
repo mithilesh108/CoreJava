@@ -1,6 +1,6 @@
 BINARY SEARCH or HALF-INTRVAL SEARCH or LOGARITHMIC SEARCH OR BINARY CHOP
 First Prerequisite  : Array must be short.
-We will apply Divide and conquer rule. O(\log n)
+We will apply Divide and conquer rule. O(log n)
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ public class Main
 	public static int binarySearch(int[] arr, int length, int data){
 	   // System.out.println(length);
 	    int first = 0, last = length-1;
-	    while(first < last){
+	    while(first <= last){
 	        System.out.println("First : "+first+" Last : "+last+" "+data);
 	        int mid = (first + last) / 2;
 	        if(arr[mid] == data)
@@ -54,9 +54,8 @@ public class Main
 // We will apply Divide and conquer rule. 
 
 // Time Complixety in Worst-case performance of Linear Search   : O(log n)
-// Time Complixety in Average performance of Linear Search      : 
-// Time Complixety in Best-case performance of Linear Search    : 
-// Worst-case space complexity   : O(1) iterative
-
+// Time Complixety in Average performance of Linear Search      : 0(log n)
+// Time Complixety in Best-case performance of Linear Search    : O(1)
+// Worst-case space complexity   : 
 
 
