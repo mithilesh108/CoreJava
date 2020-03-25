@@ -1,0 +1,91 @@
+package main.java;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipEntry;
+
+import java.util.zip.ZipInputStream;
+
+public class MyZipFileList {
+
+	private static String inputDire = "/home/mithilesh/Desktop/compare";
+	private static String outputDire = "/home/mithilesh/Desktop/";
+
+	private static int totalCount = 0;
+	
+	public static void main(String a[]) {
+		System.out.println("!-------------main method START--------------!");
+		printFileList(inputDire, outputDire);
+		System.out.println("!-------------main method END----------------!");
+	}
+
+	public static void printFileList(String inputDire, String outputDire) {
+		System.out.println("!-------------printFileList method START-------------!");
+		System.out.println();
+		File fileInput = new File(inputDire);
+		if (!fileInput.exists()) {
+			System.err.println("Input Directory not Exist : " + fileInput);
+			return;
+		}
+		List<File> listFiles = Arrays.asList(fileInput.listFiles());
+		System.out.println("Total files count : " + listFiles.size() + " In this dire : " + fileInput);
+		File fileOutput = new File(outputDire);
+		if (!fileOutput.exists()) {
+			System.err.println("Output Directory not Exist : " + fileOutput);
+			return;
+		}
+		try {
+			FileWriter fw = null;
+			BufferedWriter bw = null;
+			FileInputStream fis = null;
+			ZipInputStream zipIs = null;
+			ZipEntry zEntry = null;
+			try {
+				fw = new FileWriter(new File(outputDire + File.separator + "report.txt"));
+				bw = new BufferedWriter(fw);
+				for (File f : listFiles) {
+					String ss = f.getAbsolutePath();
+					if (ss.substring(ss.lastIndexOf("."), ss.length()).equals(".zip")) {
+						int count = 0;
+						try {
+							fis = new FileInputStream(f);
+							zipIs = new ZipInputStream(new BufferedInputStream(fis));
+							while ((zEntry = zipIs.getNextEntry()) != null) {
+								count++;
+								bw.write(zEntry.getName() + "\n");
+								// System.out.println(zEntry.getName());
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							zipIs.close();
+							fis.close();
+						}
+						System.out.println("Total file count inside ZIP : " + count + " : Zip file name : " + f.getName());
+						totalCount = totalCount + count;
+					}else
+						System.err.println("Not ZIP file : "+f);
+				} // forEach
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				bw.close();
+				fw.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println();
+		System.out.println("Total file counts inside all ZIP : " + totalCount);
+		System.out.println("Report file created successfully : " + outputDire + File.separator + "report.txt");
+		System.out.println();
+		System.out.println("!-------------printFileList method END----------------!");
+	}//printFileList()
+}//class
