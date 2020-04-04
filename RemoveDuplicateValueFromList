@@ -1,0 +1,107 @@
+
+
+package com.cts.excel;
+
+ 
+
+import java.io.BufferedReader;
+
+import java.io.File;
+
+import java.io.FileReader;
+
+import java.io.FileWriter;
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+
+import java.util.HashSet;
+
+import java.util.List;
+
+import java.util.Set;
+
+ 
+
+public class RemoveDuplicateValueFromList {
+
+ 
+
+            public static void main(String[] args) throws IOException {
+
+                        System.out.println("main metho start");
+
+                        //first try to print once and run do further process
+
+//                     System.out.println("Amitriptylin LÃ©Ä?iva INJ");
+
+                        List<String> list = new ArrayList<String>();
+
+                        try {
+
+            File f = new File("c:/aba/sss/erd.txt");
+
+            BufferedReader b = new BufferedReader(new FileReader(f));
+
+            String readLine = "";
+
+            System.out.println("Reading file using Buffered Reader");
+
+            while ((readLine = b.readLine()) != null) {
+
+                //System.out.println(readLine);
+
+                       if (!readLine.trim().isEmpty()){
+
+                                   String [] split=readLine.split(",");
+
+                                   for(String ss: split)
+
+                              list.add(ss);
+
+                       }
+
+            }
+
+                        } catch (IOException e) {
+
+                        e.printStackTrace();
+
+                    }
+
+                        System.out.println("Total count in List which contain duplicate value : "+list.size());
+
+                        Set<String> setUnique = new HashSet<String>();
+
+                        setUnique.addAll(list);
+
+                        System.out.println("Total count in Set which contain Unique value : "+setUnique.size());
+
+                        //System.exit(0);
+
+                        FileWriter writer = new FileWriter("c:/abc/def/text.txt");
+
+                        int count=1;
+
+                        for(String s : setUnique){
+
+                                    //System.out.println(s);
+
+                                    writer.write(count+":"+s+"\n");
+
+                                    count++;
+
+                        }
+
+                        System.out.println("Total count write in text file is  : "+count);
+
+                        writer.close();
+
+                        System.out.println("main metho end");
+
+            }//main
+
+}//class
+
+ 
