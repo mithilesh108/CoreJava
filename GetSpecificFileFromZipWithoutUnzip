@@ -1,0 +1,171 @@
+
+
+package com.cts.excel;
+
+ 
+
+import java.io.BufferedInputStream;
+
+import java.io.BufferedOutputStream;
+
+import java.io.File;
+
+import java.io.FileInputStream;
+
+import java.io.FileNotFoundException;
+
+import java.io.FileOutputStream;
+
+import java.io.IOException;
+
+import java.io.OutputStream;
+
+import java.util.zip.ZipEntry;
+
+import java.util.zip.ZipFile;
+
+import java.util.zip.ZipInputStream;
+
+ 
+
+public class GetSpecificFileFromZipWithoutUnzip {
+
+               
+
+                private static String input = “C://Mithilesh_Kr/compare/Files_Ve ";
+
+                private static String output = C://Mithilesh_Kr/compare/Files_Ve;
+
+ 
+
+                public static void main(String[] args) throws IOException {
+
+        System.out.println("main method start");
+
+        String fileToBeExtracted="eas_pdi";
+
+        String zipPackage=input+File.separator+"eas_pdi.zip";
+
+        unzip(zipPackage,output);
+
+        System.exit(0);
+
+        OutputStream out = new FileOutputStream(output+File.separator+fileToBeExtracted);
+
+        FileInputStream fileInputStream = new FileInputStream(zipPackage);
+
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream );
+
+        ZipInputStream zin = new ZipInputStream(bufferedInputStream);
+
+        ZipEntry ze = null;
+
+        while ((ze = zin.getNextEntry()) != null) {
+
+            if (ze.getName().equals(fileToBeExtracted)) {
+
+               System.out.println("Matched File name : "+ze.getName());
+
+               System.out.println("Placed in this loc : "+output);
+
+                byte[] buffer = new byte[9000];
+
+                int len;
+
+                while ((len = zin.read(buffer)) != -1) {
+
+                    out.write(buffer, 0, len);
+
+                }
+
+                out.close();
+
+                break;
+
+            }
+
+        }
+
+        zin.close();
+
+        System.out.println("main method end");
+
+                }
+
+                public static void unzip(String zipFilePath, String destDirectory) throws IOException {
+
+                                System.out.println(zipFilePath);
+
+        File destDir = new File(destDirectory);
+
+        if (!destDir.exists()) {
+
+            destDir.mkdir();
+
+        }
+
+        ZipFile zip = new ZipFile(zipFilePath);
+
+       
+
+        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+
+        System.out.println(zipIn.available());
+
+        ZipEntry entry = zipIn.getNextEntry();
+
+        // iterates over entries in the zip file
+
+        while (entry != null) {
+
+            String filePath = destDirectory + File.separator + entry.getName();
+
+            if (!entry.isDirectory()) {
+
+                // if the entry is a file, extracts it
+
+                extractFile(zipIn, filePath);
+
+            } else {
+
+                // if the entry is a directory, make the directory
+
+                File dir = new File(filePath);
+
+                dir.mkdir();
+
+            }
+
+            zipIn.closeEntry();
+
+            entry = zipIn.getNextEntry();
+
+        }
+
+        zipIn.close();
+
+    }
+
+                private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
+
+                                final int BUFFER_SIZE = 4096;
+
+                        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
+
+                        byte[] bytesIn = new byte[BUFFER_SIZE];
+
+                        int read = 0;
+
+                        while ((read = zipIn.read(bytesIn)) != -1) {
+
+                            bos.write(bytesIn, 0, read);
+
+                        }
+
+                        bos.close();
+
+                    }//extractFile
+
+ 
+
+}
