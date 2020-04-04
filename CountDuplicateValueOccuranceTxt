@@ -1,0 +1,289 @@
+
+
+package com.cts.excel;
+
+import java.io.File;
+
+import java.io.FileNotFoundException;
+
+import java.io.FileOutputStream;
+
+import java.io.FileWriter;
+
+import java.util.Scanner;
+
+import java.io.BufferedReader;
+
+import java.io.BufferedWriter;
+
+import java.io.DataInputStream;
+
+import java.io.FileInputStream;
+
+import java.io.FileNotFoundException;
+
+import java.io.IOException;
+
+import java.io.InputStreamReader;
+
+import java.io.OutputStreamWriter;
+
+import java.io.UnsupportedEncodingException;
+
+import java.io.Writer;
+
+import java.nio.file.Files;
+
+import java.nio.file.Path;
+
+import java.nio.file.Paths;
+
+import java.util.ArrayList;
+
+import java.util.Collections;
+
+import java.util.Comparator;
+
+import java.util.HashMap;
+
+import java.util.Iterator;
+
+import java.util.List;
+
+import java.util.Map;
+
+import java.util.Set;
+
+import java.util.StringTokenizer;
+
+import java.util.concurrent.TimeUnit;
+
+import java.util.Map.Entry;
+
+ 
+
+public class CountDuplicateValueOccurance {
+
+ 
+
+                public static void main(String[] args) throws IOException {
+
+                                System.out.println("main method start");
+
+                                String filePath="C:\\Users \\Desktop\\DuplicateValueCount\\input.txt";
+
+                                String outPath="C:\\Users \\Desktop\\DuplicateValueCount\\output.txt";
+
+                                File file1 = new File(outPath);
+
+                                FileWriter fr = new FileWriter(file1, false);//false means overwrite data in existing file
+
+                                // FileWriter fr = new FileWriter(file1, true);//true means append data in existing file
+
+                                BufferedWriter br = new BufferedWriter(fr);
+
+                               
+
+                                 File file = new File(filePath);
+
+                                  Scanner sc = new Scanner(file);
+
+                                                int count=0,coun=0; 
+
+                                                    while (sc.hasNextLine()) {
+
+                                                                coun++;
+
+                                                      System.out.println(sc.nextLine());
+
+                                                  }
+
+                                                    System.out.println("Total Count : "+coun);
+
+                                                    br.write("Total Count of text file : "+coun+"\n");
+
+                                                                long endTime1 = 0l, startTime1 = 0l;
+
+                                                                startTime1 = System.currentTimeMillis();
+
+                                                               
+
+                                                Map<String, Integer> wordMap = getWordCount(filePath);
+
+                           
+
+                           Set<String> setKey=wordMap.keySet();
+
+                                                System.out.println("Total key Set size : "+setKey.size());
+
+                                                br.write("Total Map key Set size : "+setKey.size()+"\n");
+
+                                                /*
+
+                                                 
+
+                                                 br.write("\n");
+
+                                                Iterator it=setKey.iterator();
+
+                                                int keyCount=0;
+
+                                                while(it.hasNext()) {
+
+                                                                String s=(String) it.next();
+
+                                                                String sss=s+ " : "+ wordMap.get(s);
+
+                                                                count = wordMap.get(s) +count;
+
+                                                                br.write(sss+"\n");
+
+                                                                keyCount++;
+
+                                                }
+
+                                                br.write("Total Count of map key : "+keyCount);
+
+                                                br.write("\n");
+
+                                                br.write("Total Count of map value : "+count);*/
+
+                                               
+
+                                        List<Entry<String, Integer>> list = sortByValue(wordMap);
+
+                                        for(Map.Entry<String, Integer> entry:list){
+
+                                            //System.out.println(entry.getKey()+" : "+entry.getValue());
+
+                                               br.write(entry.getKey()+"-"+entry.getValue()+"\n");
+
+                                            count =entry.getValue() +count;
+
+                                        }
+
+                                        System.out.println("Total key count : "+list.size()); 
+
+                                        System.out.println("Total Count of Emp Id: "+count);
+
+ 
+
+                                        br.write("Total key count : "+list.size());
+
+                                                                br.write("\n");
+
+                                                                br.write("Total Count of Emp Id: "+count);
+
+                                                    endTime1 = System.currentTimeMillis();
+
+                                                                System.out.println("Total time for Execution  :"+ TimeUnit.MILLISECONDS.toMinutes(endTime1 - startTime1)+ " Minutes");
+
+                                                                System.out.println("Total time for Execution :"+ TimeUnit.MILLISECONDS.toSeconds(endTime1 - startTime1)+ " Seconds");
+
+                                                                System.out.println("main method end");
+
+                                                                br.close();
+
+                                                                fr.close();
+
+                                                                sc.close();
+
+                }//main
+
+ 
+
+                public static Map<String, Integer> getWordCount(String fileName){
+
+        FileInputStream fis = null;
+
+        DataInputStream dis = null;
+
+        BufferedReader br = null;
+
+        Map<String, Integer> wordMap = new HashMap<String, Integer>();
+
+        try {
+
+            fis = new FileInputStream(fileName);
+
+            dis = new DataInputStream(fis);
+
+            br = new BufferedReader(new InputStreamReader(dis));
+
+            String line = null;
+
+            while((line = br.readLine()) != null){
+
+                StringTokenizer st = new StringTokenizer(line, "\n");
+
+                while(st.hasMoreTokens()){
+
+                    String tmp = st.nextToken().toLowerCase();
+
+                    String [] tmpSplit=tmp.split("-");
+
+                    if(tmpSplit.length>1)
+
+                              tmp=tmpSplit[0];
+
+                    if(wordMap.containsKey(tmp)){
+
+                        wordMap.put(tmp, wordMap.get(tmp)+1);
+
+                    } else {
+
+                        wordMap.put(tmp, 1);
+
+                    }
+
+                }
+
+            }
+
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        } finally{
+
+            try{if(br != null) br.close();}catch(Exception ex){}
+
+        }
+
+        return wordMap;
+
+    }//getWordCount(-)
+
+               
+
+                public static List<Entry<String, Integer>> sortByValue(Map<String, Integer> wordMap){
+
+                                               
+
+                        Set<Entry<String, Integer>> set = wordMap.entrySet();
+
+                        List<Entry<String, Integer>> list = new ArrayList<Entry<String, Integer>>(set);
+
+                        Collections.sort( list, new Comparator<Map.Entry<String, Integer>>()
+
+                        {
+
+                            public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 )
+
+                            {
+
+                                return (o2.getValue()).compareTo( o1.getValue() );
+
+                            }
+
+                        } );
+
+                        return list;
+
+                    }//sortByValue(-)
+
+}
