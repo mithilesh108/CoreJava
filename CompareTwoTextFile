@@ -1,0 +1,249 @@
+
+
+package com.cts.excel;
+
+import java.io.BufferedReader;
+
+import java.io.BufferedWriter;
+
+import java.io.DataInputStream;
+
+import java.io.File;
+
+import java.io.FileInputStream;
+
+import java.io.FileNotFoundException;
+
+import java.io.FileWriter;
+
+import java.io.IOException;
+
+import java.io.InputStreamReader;
+
+import java.util.ArrayList;
+
+import java.util.HashMap;
+
+import java.util.List;
+
+import java.util.Map;
+
+import java.util.StringTokenizer;
+
+import java.util.concurrent.TimeUnit;
+
+ 
+
+public class CompareTwoTextFile {
+
+ 
+
+//            private static String inputFirstTextFile="/home/mithilesh/Desktop/compare/first.txt";
+
+//            private static String inputSecondTextFile="/home/mithilesh/Desktop/compare/second.txt";
+
+//            private static String outputComparedTextFile="/home/mithilesh/Desktop/compare/compared.txt"; 
+
+               
+
+                public static void main(String[] args) {
+
+                                System.out.println("-----------------main method start------------------");
+
+                                long endTime = 0l, startTime = 0l;
+
+                                startTime = System.currentTimeMillis();
+
+                                File firstFile = new File(inputFirstTextFile);
+
+                                File secondFile = new File(inputSecondTextFile);
+
+                                File comparedFile = new File(outputComparedTextFile);
+
+                                if(firstFile.isFile() && secondFile.isFile() && comparedFile.isFile()) {
+
+                                                System.out.println("First file absolute path     : "+firstFile);
+
+                                                System.out.println("Second file absolute path    : "+secondFile);
+
+                                                System.out.println("Compared file absolute path  : "+comparedFile);
+
+                                }else {
+
+                                                System.out.println("All three files not eist");
+
+                                                return;
+
+                                }
+
+                                System.out.println();
+
+                                List<String> firstTextList=readTextFile(firstFile);
+
+                                System.out.println();
+
+                                List<String> secondTextList=readTextFile(secondFile);
+
+                                System.out.println();
+
+                                System.out.println("Total count in First text List  : "+firstTextList.size());
+
+                                System.out.println("Total count in Second text List : "+secondTextList.size());
+
+                                firstTextList.removeAll(secondTextList);
+
+                                System.out.println("Compared files count between first text to second text file : "+firstTextList.size());
+
+                                System.out.println();
+
+                                System.out.println("Below are the compared file's name which is not exist in second file");
+
+                                //print compared file name
+
+                                for(String file : firstTextList)
+
+                                                System.out.println(file);
+
+                                System.out.println();
+
+                                //write compared files name in text file
+
+                                if(firstTextList.size()>0)
+
+                                writeTextFile(comparedFile,firstTextList);
+
+                                else
+
+                                                System.out.println("Everything looks fine :)");
+
+                                System.out.println();
+
+                                endTime = System.currentTimeMillis();
+
+                                System.out.println("Total time for Execution  :"+ TimeUnit.MILLISECONDS.toMinutes(endTime - startTime)           + " Minutes");
+
+                                System.out.println("Total time for Execution :"+ TimeUnit.MILLISECONDS.toSeconds(endTime - startTime)+ " Seconds");
+
+                                System.out.println("-----------------main method end------------------");                         
+
+                }//main
+
+   
+
+                private static void writeTextFile(File textFile,List<String> list) {
+
+                                System.out.println("!-----------------writeTextFile method start---------------!");
+
+                                FileWriter fileWriter=null;
+
+                                BufferedWriter bufferedWriter = null;
+
+                                try {
+
+                                                // false means it will override in existing file, true means append data in existing file
+
+                                                fileWriter = new FileWriter(textFile, false);
+
+                                                bufferedWriter= new BufferedWriter(fileWriter);
+
+                                                for(String file : list)
+
+                                                                bufferedWriter.write(file+"\n");
+
+                                } catch (IOException e) {
+
+                                                // TODO Auto-generated catch block
+
+                                                e.printStackTrace();
+
+                                }finally {
+
+                                                try {
+
+                                                                if (bufferedWriter != null)
+
+                                                                                bufferedWriter.close();
+
+                                                                if (fileWriter != null)
+
+                                                                                fileWriter.close();
+
+                                                } catch (Exception ex) {
+
+                                                }
+
+                                }//finally
+
+                                System.out.println("Compared file's name written process completed in "+textFile.getName()+" file");
+
+                                System.out.println("Total no of file's count in : "+textFile.getName()+" file is : "+list.size());
+
+                                System.out.println("!-----------------writeTextFile method end---------------!");
+
+                }//writeTextFile
+
+               
+
+                private static List<String> readTextFile(File firstFile) {
+
+                                System.out.println("!-----------------readTextFile method start---------------!");
+
+                                FileInputStream fis = null;
+
+                                DataInputStream dis = null;
+
+                                BufferedReader br = null;
+
+                                List<String> textList=new ArrayList<String>();
+
+                                System.out.println("Text File name : "+firstFile.getName());
+
+                                try {
+
+                                                fis = new FileInputStream(firstFile);
+
+                                                dis = new DataInputStream(fis);
+
+                                                br = new BufferedReader(new InputStreamReader(dis));
+
+                                                String line = null;
+
+                                                while ((line = br.readLine()) != null && line.length()>0) {
+
+                                                                textList.add(line);
+
+                                                                //System.out.println(line+"  "+line.length());
+
+                                                }//while
+
+                                                System.out.println("Toatl no of lines count in "+firstFile.getName()+" file : "+textList.size());
+
+                                } catch (FileNotFoundException e) {
+
+                                                e.printStackTrace();
+
+                                } catch (IOException e) {
+
+                                                e.printStackTrace();
+
+                                } finally {
+
+                                                try {
+
+                                                                if (br != null)
+
+                                                                                br.close();
+
+                                                } catch (Exception ex) {
+
+                                                }
+
+                                }//finally
+
+                                System.out.println("!-----------------readTextFile method end-----------------!");
+
+                                return textList;
+
+                }//readTextFile
+
+}//class
