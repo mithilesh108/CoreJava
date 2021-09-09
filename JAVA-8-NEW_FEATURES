@@ -1,0 +1,15 @@
+TO sort Employee List using omparator and enhane java 8 features : 
+
+List Collection : sort(Comperator OBJ )
+Comparator<Employee> name = new Comparator<Employee>() {
+			public int compare(Employee e1, Employee e2) {
+				int result = e1.getName().compareTo(e2.getName());
+				if (result == 0)
+					result = e1.getId().compareTo(e2.getId());
+				return result;
+			}
+		};		
+listEmp.sort(name);
+#jAVa 8 NEW FEATURE
+listEmp.sort(Comparator.comparing(Employee::getName).thenComparing(Employee::getId));
+-------------------------------------------------------------------------------------------------------------
