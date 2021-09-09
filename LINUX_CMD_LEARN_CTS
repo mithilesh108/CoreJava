@@ -1,0 +1,2147 @@
+#!/bin/sh
+
+# Version 1.1.1
+
+if [[ ! -z "$1" &&  ! -z "$2" ]]; then
+
+#if [ ! -z "$1" ]; then
+
+#Variables
+
+sips_folder=$1
+
+#prcessDire="/home/mithilesh/Desktop/ECTD/input"
+
+outputDire=$2
+
+dynamicFolder=`date +%Y_%m_%d_%H_%M_%S`
+
+dynamicFolder=$outputDire"/"$dynamicFolder
+
+mkdir -p $dynamicFolder
+
+echo " "
+
+echo "                                       ~~~~~~~ BEGIN EXECUTION ~~~~~~                                   "
+
+echo " "
+
+echo "Processing SIP's folder location  : $sips_folder"
+
+echo " "
+
+cd "$sips_folder"
+
+sipCount=`ls -1 | wc -l`
+
+echo $sipCount
+
+echo "SIP's Directory          : $sips_folder "
+
+echo "Destination Directory    : $outputDire "
+
+echo " "
+
+echo "-------------------------------------------------------------------------------------------------------------------"
+
+totalCount=0;
+
+#####################################################################################
+
+################## ATTACHEMENT COUNTS DETAILS ###################################
+
+#####################################################################################
+
+#*********************************************************************************************************************************
+
+sipCountInCurrentFolder=0;
+
+  for filename in `ls *.zip`; do
+
+    sipCountInCurrentFolder=$((sipCountInCurrentFolder+1))
+
+    #echo "<<--------------------------------- "$filename"------------------------------------------------>>"
+
+extension="${filename##*.}"
+
+    fileNameWithoutExt="${filename%.*}"
+
+relativePath=$dynamicFolder"/"$fileNameWithoutExt
+
+unzip -d   $relativePath $filename  &>/dev/null  # to supress print msg on console
+
+unzip -Z1 $filename > $dynamicFolder/${filename}_zfn.txt
+
+  while IFS= read -r zipFile; do
+
+      #Check whether they are equal
+
+   if [[ "$zipFile" == *".zip"* ]];  then 
+
+   # if matched/////////////////////////////
+
+   zipFileNameWithExt=$relativePath"/"$zipFile
+
+   unzip -Z1 "$zipFileNameWithExt" > $dynamicFolder/second_zfn.txt
+
+   zipFileSecondCount=0
+
+   while IFS= read -r zipFileSecond; do
+
+       zipFileSecondCount=$((zipFileSecondCount+1))
+
+      echo   $filename"~"$zipFile"~"$zipFileSecond  >>$dynamicFolder/"Detailed_Report.txt"
+
+      echo   $filename"~"$zipFile"~"$zipFileSecond  >>$dynamicFolder/$fileNameWithoutExt".txt"  # for count purpose
+
+   done < $dynamicFolder/second_zfn.txt
+
+ 
+
+      # TO FIRST REQ
+
+                  #echo   $filename"~"$zipFile"~"$zipFileSecondCount  >>$dynamicFolder/"Count_Report.txt"
+
+           # delete the text file which is created second lavel zip
+
+           rm -r "$dynamicFolder/second_zfn.txt"
+
+   # if matched/////////////////////////////
+
+   else
+
+if [[ "$zipFile" != *"eas_pdi.xml"*  && "$zipFile" != *"eas_sip.xml"* ]];  then
+
+    #echo   $filename"~"$zipFile"~1"  >>$dynamicFolder/"Count_Report.txt"
+
+    echo   $filename"~"$zipFile   >>$dynamicFolder/"Detailed_Report.txt"
+
+echo   $filename"~"$zipFile   >>$dynamicFolder/$fileNameWithoutExt".txt"  # for count purpose
+
+fi
+
+       fi
+
+  done < $dynamicFolder/${filename}_zfn.txt
+
+# read text file for attachments count
+
+specificSipCount=`wc -l < $dynamicFolder/$fileNameWithoutExt".txt"`
+
+   totalCount=`expr $specificSipCount + $totalCount`  # declare -g
+
+  echo  "Total Attachment count in  ZIP     :   $filename     :  "  $specificSipCount
+
+  echo  "Total Attachment count in  ZIP     :   $filename     :  "  $specificSipCount  >>$dynamicFolder/"Count_Report.txt"
+
+rm -r $dynamicFolder/${filename}_zfn.txt
+
+rm -r $dynamicFolder/$fileNameWithoutExt".txt"
+
+     rm -r $relativePath
+
+done #for loop
+
+#*********************************************************************************************************************************
+
+       echo "-------------------------------------------------------------------------------------------------------------------"
+
+       echo " "
+
+  echo  "Final  Attachments count for all  SIPs  :  $totalCount     ; Total SIPS count : "  $sipCountInCurrentFolder
+
+  echo " "
+
+echo "                                        ~~~~~~~ END EXECUTION ~~~~~~~~                        "
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "sip's_folder   source                : Exect location where you have your ZIP file exist"
+
+echo "Destination                          : location where you want place consequnce"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+exit 1
+
+fi
+
+-----------------------------------------------------------------------------------------------------
+
+To rename file in middle :  for f in *\&*; do mv -v "$f" $(echo "$f" | tr '\&' '-'); done
+
+`SCI_RES&Trackwise_R&D&4510&1.zip' -> `SCI_RES-Trackwise_R-D-4510-1.zip'
+
+`SCI_RES&Trackwise_R&D&4511&1.zip' -> `SCI_RES-Trackwise_R-D-4511-1.zip'
+
+To count all sub folder inside 012235 dire except itself : [presops@xsnl50a493p 012235]$ find . -mindepth 1 -type d | wc -l
+
+ 
+
+To count all sub files inside dire only : [presops@xsnl50a493p 012235]$ find . -type f | wc -l
+
+ 
+
+To rename all files : rename .zip .large_zip *.zip
+
+ 
+
+To check folder's size : du -sh *
+
+ 
+
+To send all files name in a file :  ls > file.txt
+
+To change the access permission : chmod 777 PveSubmitter-*
+
+ 
+
+File count in current directory: ls | wc -l
+
+File count in current directory: ls | wc -l
+
+Fire it from the directory location where the count needs to be retrieved: find . -type f | wc -l
+
+Create text file and place all file names in the current directory: ls > file_name.txt
+
+SCP command: scp {source} presops@xsnl50a491x.pharma.aventis.com:{destination}
+
+Find a file from list of zip files: for f in `ls *.zip`; do echo "$f: "; unzip -l $f | grep <file_name>; done
+
+Find a file from list of directories: find . -name "pattern" -print
+
+Find the size of a directory: du -sh <directory_name>
+
+Find list of empty directory/subdirectory from a directory: find . -empty -type d
+
+Find disc memory: df -h /data/transformation/standard_output/
+
+See running process: ps -ef
+
+Find specific file loc : for f in `ls *.zip`; do echo "$f: "; unzip -l $f | grep TCD11088_JSMO2012_draft1; done
+
+                                                                                 (file   name             )
+
+to find out special character in whole folder
+
+-------------------------------------------------
+
+grep --include=\*.xml -r '/data/rec_cifs/SCI_PUB_REV/CLEAR/' -e "&#x" > /data/rec_cifs/PEACOCK/filename2.txt
+
+grep --include=\*.xml -rl "&#x" /data/rec_cifs/SCI_PUB_REV_CLEAR/CLEAR/
+
+ 
+
+To know how many attachements are there
+
+-----------------------------------------------
+
+[presops@xsnl11c569k ~]$ cd "/data/transformation/standard_input/MGE_SPR/Legacy publications/"
+
+[presops@xsnl11c569k Legacy publications]$ find . -type f | wc -l
+
+21471
+
+[presops@xsnl11c569k Legacy publications]$ ls > "/data/transformation/standard_input/MGE_SPR/legacy_folder.txt"
+
+ 
+
+----------------------------------------------------------------------------
+
+clear (erase yr screen )
+
+more detail_report_raw.xml(from file  dire location)
+
+grep '<records>' detail_report_raw.xml
+
+for f in `ls *.zip`; do echo "$f: "; unzip -l $f | grep TCD11088_JSMO2012_draft1; done
+
+ 
+
+to count publication id in CLEAR folder
+
+---------------------------------------------
+
+[x010655a@xsnl11c569k CLEAR]$ find . -name publication.xml | wc -l
+
+21660
+
+[x010655a@xsnl11c569k CLEAR]$
+
+-----------------------------------------------------------------------
+
+To count file/folder in current dire=    ls -1 | wc -l
+
+ 
+
+-----------------------------------------------------------------------------------
+
+to convert windows to linux file
+
+[presops@xsnl50a493p IHRIS_CON_TRANSFORM]$ dos2unix preserve_ihr_cvg_transformation_launch.sh
+
+ 
+
+scp -r filename presops@.pharma.aventis.com:
+
+               presops@xsnl11c569k.pharma.aventis.com: /data/transformation/standard_output/IHRIS_CVG/RefTable/
+
+                       presops@xsnl11c569k
+
+SCP command: scp {source} presops@xsnl11c569k.pharma.aventis.com:{destination}
+
+p011644A@xsnl11c569k.pharma.aventis.com
+
+scp -r /data/IHRIS_input/Metadata/IHRIS_CVG/RefTable/IHR_CVG_Ref_Table.xlsx p011644A@xsnl11c569k.pharma.aventis.com: /data/transformation/standard_output/IHRIS_CVG/RefTable/
+
+ 
+
+scp -r "/data/IHRIS_input/Metadata/IHRIS_CVG/RefTable/IHR_CVG_Ref_Table.xlsx" p011644A@xsnl11c569k.pharma.aventis.com:/data/transformation/standard_output/IHRIS_CVG/RefTable/
+
+ 
+
+scp -r "/data/IHRIS_input/Metadata/IHRIS_CVG/RefTable/IHR_CVG_Ref_Table.xlsx" presops@xsnl11c569k.pharma.aventis.com:/data/transformation/standard_output/IHRIS_CVG/RefTable/
+
+ 
+
+ 
+
+--------------------------  working in stage                                          (stage SSH session ID)
+
+scp -r "/data/IHRIS_input/Metadata/IHRIS_CVG/RefTable/IHR_CVG_Ref_Table.xlsx" presops@xsnl50a491x.pharma.aventis.com:/data/transformation/standard_output/Chris/
+
+---------------------------copy from test to stage------------------------------------------
+
+scp -r "/apps/preserve/transform/IHRIS_CON_TRANSFORM/ihr_report_ActiveEmployees.txt" presops@xsnl50a491x.pharma.aventis.com:/data/transformation/standard_output/Chris/
+
+---------------------------copy from dev to test------------------------------------------
+
+scp -r "/data/transformation/standard_output/PVeSubmitter/SIP_vac/VAC_CD/*" p011644a@xsnl11c569k.pharma.aventis.com:/data/rec/SIP/PveSubmitter/  ((this is not working))
+
+scp -r *.zip p011644a@xsnl11c569k.pharma.aventis.com:/data/rec/SIP/PveSubmitter/   (this is working)
+
+scp -r * p011644a@xsnl11c569k.pharma.aventis.com:/data/rec/SIP/PveSubmitter/   (whole folder will copy)
+
+ 
+
+scp -r "/data/transformation/standard_output/PVeSubmitter/SIP_vac/VAC_CD/" p011644a@xsnl11c569k.pharma.aventis.com:/data/rec/SIP/PveSubmitter/
+
+scp -r .zip presops@xsnl11c569k.pharma.aventis.com:/data/rec/SIP/PveSubmitter/new
+
+ 
+
+stage : presops@xsnl50a491x.pharma.aventis.com
+
+test  : p011644A@xsnl11c569k.pharma.aventis.com
+
+dev   : presops@xsnl50a493p.pharma.aventis.com
+
+        presops@xsnl11c569k
+
+ 
+
+To know how many process running in background
+
+---------------------------------------------------
+
+[presops@xsnl11c569k p011644a]$ ps -ef | grep java
+
+ 
+
+To Kill the running process :
+
+-------------------------------
+
+kill -9 5521 <-'
+
+----------------------------------
+
+To run process in background when unfortunally process closed :
+
+-------------------------------------------------
+
+nohup ./preserve_veronese_dataset_launch.sh "SELECT * FROM EDMS.DCTM4I" DCTM4I &> nohup_dctm_2020.out&
+
+----------------------------------------------------------------
+
+To see running logs file on console
+
+tail -100f IHR_InactiveRecordFolder.log
+
+-----------------------------------------------------------------------------
+
+To find date and time of file =stat -c '%y : %n' filename
+
+To find date of file = [presops@xsnl50a491x Vaccines_Output]$ ls -l | grep 2016SA050398_SubmissionReport_16-Mar-2016.pdf (space should not be there in file's name)
+
+To find specific file in folder =find . -name 2016SA050398_SubmissionReport_16-Mar-2016.pdf  find . -name "2016SA060353_Submission report_30 Mar 2016.pdf"
+
+To find specific file in folder =find . -name "2016SA060353_Submission report_30 Mar 2016.pdf"(if space put in double qutation)
+
+ 
+
+========================================================================================================
+
+To see eas_pdi.xml from Zip file : unzip -p GLOBAL_TM-NEMO-0018-1.zip eas_pdi.xml(will show in console)
+
+To see eas_pdi.xml from Zip file : unzip -p GLOBAL_TM-NEMO-0018-1.zip eas_pdi.xml >eas_pdi.xml(will download in current dire)
+
+To print all files name of zip on console  : unzip -Z1 zip_file_name
+
+-----------------------------------------------------------------------------------------------------------------------
+
+cat - Concatenate and print the content of files.
+
+To Concatenate two files in one file : cat 67_pdi.xml 67_sip.xml > 67.txt
+
+To know or print absolute directory on console : pwd
+
+To logout current session : exit
+
+ 
+
+To find specific file in folder =find . -name "2010-09-17_MACI00206_05 Bertrand_NTF_ISF 5.3:.pdf"
+
+To rename file name :
+
+ 
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Folder-File-cmd.txt :
+
+ 
+
+To create folders : mkdir -r /abc/def/ghi
+
+ 
+
+To create file  : touch filename
+
+ 
+
+To count file/folder with subdirectory from curent folder :  find . -name filename/foldername | wc -l
+
+ 
+
+To count all sub folder inside student folder except itself : find . -mindepth 1 -type d | wc -l
+
+ 
+
+To count all sub files inside current folder except folder : find . -type f | wc -l
+
+ 
+
+To count all sub files inside current folder and placed in file : find . -type f | wc -l >abc.txt(only no)
+
+ 
+
+File as well as dire it will paced in file with the size : find . -type f | du -ah > abc.txt
+
+ 
+
+To print only sub folder's file size with file name : find . -type f -exec du -a {} + (but kb mb gb it wont show)
+
+ 
+
+To print all sub folders size except all sub files : find . -type f | du -ch   (with mb gb kb it'd show)
+
+ 
+
+To print all sub folder's file only with sorting order without MB/GB/KB : find . -type f -exec du -a {} + | sort -n -r 
+
+ 
+
+To rename all fies form one folder :  rename .zip .large_zip *.zip
+
+ 
+
+To print all folder size from current dire : du -sh *
+
+ 
+
+To send all files name in a file =  ls > file.txt
+
+ 
+
+To count files inside zip : unzip -l student-1.zip | wc -l(u have to reduce 5 with final count)
+
+ 
+
+To count files inside zip : unzip -l student-1.zip(print all the files names and last statement count)
+
+ 
+
+To count files inside zip : fileCnt=`expr $(unzip -l student.zip |wc -l) - "5"`;echo "Files inside zip is = ${fileCnt}"
+
+ 
+
+To download specific file from zip : unzip -p student-1.zip eas_pdi.xml > sdfsd.xml
+
+ 
+
+To store all file from zip in text file : unzip -Z1 student-1.zip > file.txt(to add all files name which is exist in zip)
+
+ 
+
+Find a file from list of zip files: for f in `ls *.zip`; do echo "$f: "; unzip -l $f | grep <file_name>; done
+
+ 
+
+Find a file from list of directories: find . -name "file nanme" -print
+
+ 
+
+Find list of empty directory/subdirectory from a directory: find . -empty -type d
+
+ 
+
+Find list of empty directory/subdirectory from a directory with absolute path : find /data/transformation/standard_input/Domasys/AuditTrail/ -empty
+
+ 
+
+Find specific file loc : for f in `ls *.zip`; do echo "$f: "; unzip -l $f | grep filename; done
+
+ 
+
+Find disc memory: df -h /data/transformation/standard_output/
+
+ 
+
+See running process: ps -ef
+
+ 
+
+File count in current directory except itself : ls -1 | wc -l
+
+ 
+
+File count in current directory with itself : ls | wc -l
+
+------------------------------------------------------------------------------------------------------------------------------
+
+sip's_attachement_count_only.sh
+
+#!/bin/sh
+
+ 
+
+# Version 1.1.1
+
+ 
+
+ 
+
+if [[ ! -z "$1" &&  ! -z "$2" ]]; then
+
+ 
+
+#if [ ! -z "$1" ]; then
+
+ 
+
+ 
+
+#Variables
+
+ 
+
+sips_folder=$1
+
+ 
+
+#prcessDire="/home/mithilesh/Desktop/ECTD/input"
+
+ 
+
+prcessDire=$2
+
+ 
+
+dynamicFolder=`date +%Y_%m_%d_%H_%M_%S`
+
+ 
+
+dynamicFolder=$prcessDire"/"$dynamicFolder
+
+ 
+
+mkdir -p $dynamicFolder
+
+ 
+
+echo " "
+
+ 
+
+echo "                                       ~~~~~~~ BEGIN EXECUTION ~~~~~~                                   "
+
+ 
+
+echo " "
+
+ 
+
+echo "Processing SIP's folder location  : $sips_folder"
+
+ 
+
+echo " "
+
+ 
+
+cd $sips_folder
+
+ 
+
+sipCount="ls -1 | wc -l"
+
+ 
+
+echo "SIP's Directory          : $sips_folder "
+
+ 
+
+echo "Destination Directory    : $prcessDire "
+
+ 
+
+echo " "
+
+ 
+
+echo "-------------------------------------------------------------------------------------------------------------------"
+
+ 
+
+totalCount=0;
+
+ 
+
+#####################################################################################
+
+ 
+
+################## ATTACHEMENT COUNTS DETAILS ###################################
+
+ 
+
+#####################################################################################
+
+ 
+
+  sipCountInCurrentFolder=0;
+
+ 
+
+  for filename in `ls *.zip`; do
+
+ 
+
+    sipCountInCurrentFolder=$((sipCountInCurrentFolder+1))
+
+ 
+
+    #echo "<<--------------------------------- "$filename"------------------------------------------------>>"
+
+ 
+
+extension="${filename##*.}"
+
+ 
+
+   fileNameWithoutExt="${filename%.*}"
+
+ 
+
+relativePath=$dynamicFolder"/"$fileNameWithoutExt
+
+ 
+
+unzip -d   $relativePath $filename  &>/dev/null  # to supress print msg on console
+
+ 
+
+unzip -Z1 $filename > $dynamicFolder/${filename}_zfn.txt
+
+ 
+
+ 
+
+  while IFS= read -r zipFile; do
+
+      #Check whether they are equal
+
+   if [[ "$zipFile" == *".zip"* ]];  then 
+
+   # if matched/////////////////////////////
+
+   zipFileNameWithExt=$relativePath"/"$zipFile
+
+   unzip -Z1 "$zipFileNameWithExt" > $dynamicFolder/second_zfn.txt
+
+   zipFileSecondCount=0
+
+   while IFS= read -r zipFileSecond; do
+
+       zipFileSecondCount=$((zipFileSecondCount+1))
+
+      echo   $filename"~"$zipFile"~"$zipFileSecond  >>$dynamicFolder/"Detailed_Report.txt"
+
+      echo   $filename"~"$zipFile"~"$zipFileSecond  >>$dynamicFolder/$fileNameWithoutExt".txt"  # for count purpose
+
+   done < $dynamicFolder/second_zfn.txt
+
+ 
+
+      # TO FIRST REQ
+
+                  echo   $filename"~"$zipFile"~"$zipFileSecondCount  >>$dynamicFolder/"Count_Report.txt"
+
+           # delete the text file which is created second lavel zip
+
+           rm -r "$dynamicFolder/second_zfn.txt"
+
+   # if matched/////////////////////////////
+
+   else
+
+if [[ "$zipFile" != *"eas_pdi.xml"*  && "$zipFile" != *"eas_sip.xml"* ]];  then
+
+    echo   $filename"~"$zipFile"~1"  >>$dynamicFolder/"Count_Report.txt"
+
+    echo   $filename"~FIRST LAVEL CONTENT FILE~"$zipFile   >>$dynamicFolder/"Detailed_Report.txt"
+
+echo   $filename"~FIRST LAVEL CONTENT FILE~"$zipFile   >>$dynamicFolder/$fileNameWithoutExt".txt"  # for count purpose
+
+fi
+
+   
+
+       fi
+
+ 
+
+  done < $dynamicFolder/${filename}_zfn.txt
+
+ 
+
+# read text file for attachments count
+
+ 
+
+specificSipCount=`wc -l < $dynamicFolder/$fileNameWithoutExt".txt"`
+
+ 
+
+   totalCount=`expr $specificSipCount + $totalCount`  # declare -g
+
+ 
+
+  echo  "Total Attachment count for  SIP     :   $filename     :  "  $specificSipCount
+
+ 
+
+rm -r $dynamicFolder/${filename}_zfn.txt
+
+rm -r $dynamicFolder/$fileNameWithoutExt".txt"
+
+     rm -r $relativePath
+
+ 
+
+done #firstFor loop
+
+ 
+
+       echo "-------------------------------------------------------------------------------------------------------------------"
+
+ 
+
+       echo " "
+
+ 
+
+  echo  "Final  Attachments count for all  SIPs  :  $totalCount     ; Total SIPS count : "  $sipCountInCurrentFolder
+
+ 
+
+  echo " "
+
+ 
+
+echo "                                        ~~~~~~~ END EXECUTION ~~~~~~~~                        "
+
+ 
+
+ 
+
+####################################################################
+
+ 
+
+################## USAGE NOTES ###################################
+
+ 
+
+####################################################################
+
+ 
+
+else
+
+ 
+
+ 
+
+echo " "
+
+ 
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+ 
+
+echo " "
+
+ 
+
+echo "###################################################################################################################"
+
+ 
+
+echo " "
+
+ 
+
+echo "sip's_folder   source                : location where you have your SIPs exist"
+
+ 
+
+echo " Destination                            : location where you want place consequnce"
+
+ 
+
+echo " "
+
+ 
+
+echo "###################################################################################################################"
+
+ 
+
+        echo " "
+
+ 
+
+ 
+
+exit 1
+
+ 
+
+ 
+
+fi
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+sip's_report.sh
+
+#!/bin/sh
+
+# Version 1.1.1
+
+ 
+
+if [[ ! -z "$1" &&  ! -z "$2" ]]; then
+
+#if [[ ! -z "$1" ]]; then
+
+ 
+
+#Variables
+
+sips_folder=$1
+
+sips_destination=$2
+
+ 
+
+echo " "
+
+echo "                                   ~~~~~~~ BEGIN EXECUTION ~~~~~~                                        "
+
+echo " "
+
+echo "Processing SIP's source location : $sips_folder"
+
+echo "Processing SIP's destination location : $sips_destination"
+
+echo " "
+
+cd $sips_folder
+
+sipCount="ls -1 | wc -l"
+
+ 
+
+echo "Total SIP's count in Current Dire, $sips_folder : " $(eval "$sipCount")
+
+echo " " 
+
+#/data/transformation/standard_output/NEMO/SIP2/Trademark_Country
+
+part1=`dirname "$sips_folder"`  #/data/transformation/standard_output/NEMO/SIP2
+
+part2=`basename "$sips_folder"`  #Trademark_Country
+
+dynamicFolder=`date +%Y_%m_%d_%H_%M_%S`
+
+mkdir -p $sips_destination/$dynamicFolder/xml
+
+ 
+
+                echo " XML folders created."
+
+                echo " "
+
+                echo "################## ATTACHEMENT COUNT DETAILS PROCESS START ###################################"
+
+                echo " "
+
+#################################################################################
+
+################## ATTACHEMENT COUNTS DETAILS ###################################
+
+#################################################################################
+
+echo " SIP Name : All files count inside SIP : AIU COUNT inside SIP.XML : AIU Vs Files Matched : Business tag count : Attachment tag count : Business Vs Attachement tag Matched"  >> $sips_destination/$dynamicFolder/SipAttachementCountDetails.txt
+
+  for filename in `ls *.zip`; do
+
+   # EAS_SIP.XML operation
+
+   echo "--------------------------------- "$filename"------------------------------------------------>>"
+
+   unzip -p $filename eas_sip.xml >> $sips_destination/$dynamicFolder/xml/${filename}_sip.xml
+
+   aiucount=`sed -n 's/<aiu_count>\(.*\)<\/aiu_count>/\1/p' $sips_destination/$dynamicFolder/xml/${filename}_sip.xml`
+
+   fileCount=`expr $(unzip -l $filename |wc -l) - "7"`
+
+   echo "AIU COUNT INSIDE SIP.XML                   :"$aiucount
+
+   echo "Attachements count inside SIP              : "$fileCount
+
+    matched=""
+
+   if [ $aiucount = $fileCount ]
+
+     then
+
+      matched="Matched"
+
+     else
+
+      matched="NotMatched"
+
+   fi
+
+ 
+
+   # EAS_PDI.XML operation
+
+   unzip -p $filename eas_pdi.xml >> $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml
+
+   business=`grep '<business' $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml \
+
+                                                |wc -l`
+
+   attachment=`grep '<attachment>' $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml \
+
+                                                |wc -l`  
+
+    echo "BUSINESS ATTRIBUTE COUNT INSIDE PDI.XML    : "$business
+
+                echo "ATTACHEMENT ATTRIBUTE COUNT INSIDE PDI.XML : "$attachment
+
+                echo " "
+
+                matchedTag=""
+
+                if [ $business = $attachment ]
+
+     then
+
+      matchedTag="Matched"
+
+     else
+
+      matchedTag="NotMatched"
+
+   fi                         
+
+   echo " $filename : "`expr $(unzip -l $filename |wc -l) - "7"`" : "$aiucount ":" $matched" : "$business" : "$attachment":" $matchedTag >> $sips_destination/$dynamicFolder/SipAttachementCountDetails.txt
+
+done
+
+   echo "################## ATTACHEMENT COUNT DETAILS PROCESS END ###################################"
+
+  echo " "
+
+                echo "================================ ATTACHEMENT NAMES DETAILS PROCESS START ================================"
+
+                echo " "
+
+################################################################################
+
+################## ATTACHEMENT NAMES DETAILS ###################################
+
+################################################################################
+
+  echo " SIP Name : SIP'S FILE COUNT : Filepath tag count"  >> $sips_destination/$dynamicFolder/SipAttachementFilesDetails.txt
+
+  for filename in `ls *.zip`; do
+
+   
+
+    unzip -p $filename eas_pdi.xml > $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml 
+
+                unzip -Z1 $filename > $sips_destination/$dynamicFolder/xml/${filename}_zfn.txt
+
+               
+
+   # IF INSIDE PDI.XML ATTRIBUTE NAME IS <filepath> USED BELOW          
+
+   perl -lne 'BEGIN{undef $/} while (/<filepath>(.*?)<\/filepath>/sg){($x = $1) =~ s/\n\s*/\n/g; print $x}' $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml > $sips_destination/$dynamicFolder/xml/${filename}_afn.txt
+
+   
+
+   # IF INSIDE PDI.XML ATTRIBUTE NAME IS <file_path> USED BELOW
+
+   #perl -lne 'BEGIN{undef $/} while (/<file_path>(.*?)<\/file_path>/sg){($x = $1) =~ s/\n\s*/\n/g; print $x}' $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml > $sips_destination/$dynamicFolder/xml/${filename}_afn.txt
+
+  
+
+  # IF INSIDE PDI.XML ATTRIBUTE NAME IS <filePath> USED BELOW
+
+  # perl -lne 'BEGIN{undef $/} while (/<filePath>(.*?)<\/filePath>/sg){($x = $1) =~ s/\n\s*/\n/g; print $x}' $sips_destination/$dynamicFolder/xml/${filename}_pdi.xml > $sips_destination/$dynamicFolder/xml/${filename}_afn.txt
+
+ 
+
+   atc_count_sip=`wc -l < $sips_destination/$dynamicFolder/xml/${filename}_zfn.txt`
+
+   atc_count_pdi=`wc -l < $sips_destination/$dynamicFolder/xml/${filename}_afn.txt`
+
+   echo "--------------------------------- "$filename"------------------------------------------------>>"
+
+   #if [[ $atc_count_pdi == 0 ]]; then
+
+   echo "Attachements count inside SIP :  "$((atc_count_sip-2))
+
+   echo "Attachements count inside PDI :  "$atc_count_pdi
+
+     echo $filename " : " $((atc_count_sip-2)) " : " $atc_count_pdi >> $sips_destination/$dynamicFolder/SipAttachementFilesDetails.txt
+
+    while IFS= read -r atcFile; do    
+
+                  flag="false"
+
+                    while IFS= read -r zipFile; do           
+
+                       if [[ "$atcFile" == "$zipFile" ]]; then
+
+                                                  flag="true"
+
+              echo $filename ":" $zipFile ":" $atcFile >> $sips_destination/$dynamicFolder/SipAttachementFilesDetails.txt
+
+                                                  break
+
+                                   fi
+
+                                done < $sips_destination/$dynamicFolder/xml/${filename}_zfn.txt
+
+                                  if [[ $flag == "false" ]]; then
+
+                                                   echo $filename ":" NotMatched ":" $atcFile >> $sips_destination/$dynamicFolder/SipAttachementFilesDetails.txt
+
+                                                   echo "File name not exist in SIP : "$atcFile
+
+                                  fi
+
+    done < $sips_destination/$dynamicFolder/xml/${filename}_afn.txt
+
+    #fi  
+
+    echo " "           
+
+    #echo "Inside  pdi.xml  <filepath> tag not exist . Please update script based on PDI.XML'S FILEPATH tag "
+
+  done # forloop end
+
+         echo " "
+
+  echo "================================ ATTACHEMENT NAMES DETAILS PROCESS END ================================"
+
+cd $sips_destination/$dynamicFolder/xml
+
+rm -r $sips_destination/$dynamicFolder/xml
+
+echo " "
+
+echo "                                  ~~~~~~~ END EXECUTION ~~~~~~                  "
+
+ 
+
+##################################################################
+
+################## USAGE NOTES ###################################
+
+##################################################################
+
+else
+
+ 
+
+ 
+
+                echo " "
+
+                echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+                echo " "
+
+                echo "###################################################################################################################"
+
+                echo " "
+
+                echo "  Source                : location where you have your SIPs exist"
+
+                echo "  Destination           : location where you want place consequnce"
+
+                echo " "
+
+                echo "###################################################################################################################"
+
+        echo " "
+
+ 
+
+                  exit 1
+
+ 
+
+fi
+
+-----------------------------------------------------------------------------------------------------------------
+
+sunset_sip_files_count_zip_or-direct-file.sh
+
+#!/bin/sh
+
+# Version 1.1.1
+
+ 
+
+if [[ ! -z "$1" &&  ! -z "$2" ]]; then
+
+#if [ ! -z "$1" ]; then
+
+ 
+
+#Variables
+
+sips_folder=$1
+
+#prcessDire="/home/mithilesh/Desktop/ECTD/input"
+
+prcessDire=$2
+
+dynamicFolder=`date +%Y_%m_%d_%H_%M_%S`
+
+dynamicFolder=$prcessDire"/"$dynamicFolder
+
+mkdir -p $dynamicFolder
+
+echo " "
+
+echo "                                       ~~~~~~~ BEGIN EXECUTION ~~~~~~                                   "
+
+echo " "
+
+echo "Processing SIP's folder location  : $sips_folder"
+
+echo " "
+
+cd $sips_folder
+
+sipCount="ls -1 | wc -l"
+
+echo "SIP's Directory          : $sips_folder "
+
+echo "Destination Directory    : $prcessDire "
+
+echo " "
+
+echo "-------------------------------------------------------------------------------------------------------------------"
+
+totalCount=0;
+
+#####################################################################################
+
+################## ATTACHEMENT COUNTS DETAILS ###################################
+
+#####################################################################################
+
+  sipCountInCurrentFolder=0;
+
+  for filename in `ls *.zip`; do
+
+    sipCountInCurrentFolder=$((sipCountInCurrentFolder+1))
+
+    #echo "<<--------------------------------- "$filename"------------------------------------------------>>"
+
+extension="${filename##*.}"
+
+    fileNameWithoutExt="${filename%.*}"
+
+relativePath=$dynamicFolder"/"$fileNameWithoutExt
+
+unzip -d   $relativePath $filename  &>/dev/null  # to supress print msg on console
+
+unzip -Z1 $filename > $dynamicFolder/${filename}_zfn.txt
+
+ 
+
+  while IFS= read -r zipFile; do
+
+      #Check whether they are equal
+
+   if [[ "$zipFile" == *".zip"* ]];  then  
+
+   # if matched/////////////////////////////
+
+   zipFileNameWithExt=$relativePath"/"$zipFile
+
+   unzip -Z1 "$zipFileNameWithExt" > $dynamicFolder/second_zfn.txt
+
+   zipFileSecondCount=0
+
+   while IFS= read -r zipFileSecond; do
+
+       zipFileSecondCount=$((zipFileSecondCount+1))
+
+      echo   $filename"~"$zipFile"~"$zipFileSecond  >>$dynamicFolder/$fileNameWithoutExt".txt"
+
+   done < $dynamicFolder/second_zfn.txt
+
+      # TO FIRST REQ
+
+                  echo   $filename"~"$zipFile"~"$zipFileSecondCount  >>$dynamicFolder/$fileNameWithoutExt"_count.txt"
+
+           # delete the text file which is created second lavel zip
+
+           rm -r "$dynamicFolder/second_zfn.txt"
+
+   # if matched/////////////////////////////
+
+   else
+
+     echo   $filename"~FIRST LAVEL CONTENT FILE~"$zipFile   >>$dynamicFolder/$fileNameWithoutExt".txt"
+
+       fi
+
+  done < $dynamicFolder/${filename}_zfn.txt
+
+ # read text file for attachments count
+
+filesCount=`wc -l < $dynamicFolder/$fileNameWithoutExt".txt"`
+
+ no=2
+
+specificSipCount=`expr $filesCount - $no`
+
+   totalCount=`expr $specificSipCount + $totalCount`  # declare -g
+
+  echo  "Total Attachment count for  SIP     :   $filename     :  "  $specificSipCount
+
+rm -r $dynamicFolder/${filename}_zfn.txt
+
+     rm -r $relativePath
+
+done #firstFor loop
+
+       echo "-------------------------------------------------------------------------------------------------------------------"
+
+       echo " "
+
+  echo  "Final  Attachments count for all  SIPs  :  $totalCount     ; Total SIPS count : "  $sipCountInCurrentFolder
+
+  echo " "
+
+echo "                                        ~~~~~~~ END EXECUTION ~~~~~~~~                        "
+
+ 
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+ 
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "sip's_folder   source                : location where you have your SIPs exist"
+
+echo " Destination                            : location where you want place consequnce"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+ 
+
+exit 1
+
+ 
+
+fi
+
+-----------------------------------------------------------------------------------------------------------
+
+veronese_zip_file's_count_and_details_from_subdire.sh
+
+#!/bin/sh
+
+# Version 1.1.
+
+if [[ ! -z "$1" &&  ! -z "$2" ]]; then
+
+#if [ ! -z "$1" ]; then
+
+#Variables
+
+sips_folder=$1
+
+prcessDire=$2
+
+ 
+
+dynamicFolder=`date +%Y_%m_%d_%H_%M_%S`
+
+dynamicFolder=$prcessDire"/"$dynamicFolder
+
+mkdir -p $dynamicFolder
+
+ 
+
+echo " "
+
+echo "                                       ~~~~~~~ BEGIN EXECUTION ~~~~~~                                   "
+
+echo " "
+
+echo "Processing ZIP's folder location  : $sips_folder"
+
+echo " "
+
+ 
+
+cd $sips_folder
+
+sipCount="ls -1 | wc -l"
+
+ 
+
+echo "Destination Directory    : $prcessDire "
+
+echo " "
+
+ 
+
+altogetherFilesCount=0;
+
+altogetherZipCount=0;
+
+#####################################################################################
+
+################## ATTACHEMENT COUNTS DETAILS ###################################
+
+#####################################################################################
+
+ 
+
+  for filename in `ls`; do
+
+    echo "<<--------------------------------- "$filename"------------------------------------------------>>"
+
+                totalFilesCountZip=0;
+
+    cd $filename
+
+                #create folder based on cabinet
+
+                dynamicFolderBasedBatch=$dynamicFolder"/"$filename
+
+    mkdir -p $dynamicFolderBasedBatch   
+
+                #placed all zip files in text file
+
+                find . -type f > $dynamicFolderBasedBatch/${filename}_all_files.txt
+
+                #get one by one zip file from text file
+
+                zipCount=0;
+
+                while IFS=/ read junk zipFile; do  
+
+                   #Check whether they are equal
+
+       if [[ "$zipFile" == *".zip"* ]];  then
+
+                      zipCount=$((zipCount+1))
+
+                      # placed all files of zip inside text file
+
+                      unzip -Z1 "$zipFile" > $dynamicFolderBasedBatch/$(basename "$zipFile").txt
+
+                                  zipFileSecondCount=0
+
+          while IFS= read -r zipFileSecond; do
+
+            zipFileSecondCount=$((zipFileSecondCount+1))
+
+            echo   $filename"~"$(basename "$zipFile")"~"$zipFileSecond  >>$dynamicFolder/$filename"_files_details.txt"
+
+          done < $dynamicFolderBasedBatch/$(basename "$zipFile").txt
+
+                                  echo   $filename"~"$(basename "$zipFile")"~"$zipFileSecondCount  >>$dynamicFolder/$filename"_files_count.txt"
+
+                                  echo "$zipFile : Files count : $zipFileSecondCount"
+
+                                  totalFilesCountZip=$(($zipFileSecondCount + $totalFilesCountZip))
+
+                   else
+
+         echo "Not a ZIP files : $zipFile"
+
+                   fi
+
+               
+
+                done < $dynamicFolderBasedBatch/${filename}_all_files.txt
+
+                echo "================================================================================================================="
+
+     echo "================== $filename , ZIP count : $zipCount , ZIP File count : $totalFilesCountZip , $(($totalFilesCountZip - $zipCount)) ===================="
+
+     echo "================================================================================================================="
+
+    rm -r $dynamicFolder"/"$filename
+
+    altogetherFilesCount=$(($totalFilesCountZip + $altogetherFilesCount))
+
+                altogetherZipCount=$(($zipCount + $altogetherZipCount))
+
+    cd ..
+
+  done #for loo
+
+echo " "
+
+  echo "################################################################################################################"
+
+  echo "############## Final Altogether ZIP count : $altogetherZipCount , Attachments count for all  ZIPs  :  $altogetherFilesCount , $(($altogetherFilesCount - $altogetherZipCount)) #######################"
+
+  echo "################################################################################################################"
+
+echo " "
+
+echo "                                        ~~~~~~~ END EXECUTION ~~~~~~~~                        "
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "sip's_folder   source                : location where you have your SIPs exist"
+
+echo " Destination                         : location where you want place consequnce"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+exit 1
+
+fi
+
+ 
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+veronise_folder's_subfolder_files_count.sh
+
+ 
+
+#!/bin/sh
+
+# Version 1.1.1
+
+#pathname=a/b/c
+
+#echo $(basename $pathname)
+
+#echo $(basename $(dirname $pathname))
+
+#echo $(basename $(dirname $(dirname $pathname)))
+
+# For taking folder name with space
+
+SAVEIFS=$IFS
+
+IFS=$(echo -en "\n\b")
+
+if [ ! -z "$1" ]; then
+
+output=`pwd`
+
+sips_folder=$1
+
+echo "---------------------------script execution start-------------------------------------"
+
+echo "Given or passed directory : $sips_folder"
+
+echo "Output report's directory : $output"
+
+echo "********************************************************************************"
+
+cd $sips_folder
+
+total_count=0
+
+for filename in `ls`; do
+
+cd "$filename"
+
+count=`find . -type f | wc -l`
+
+echo "Folder Name :" "$filename" " : $count"
+
+echo "Folder Name :" "$filename" " : $count" >>$output/"$(basename $sips_folder)_report.txt"
+
+total_count=$((total_count+count))
+
+cd $sips_folder
+
+done #for loop
+
+echo "********************************************************************************"
+
+echo "Total counts of all folders's file : $total_count"
+
+echo "---------------------------script execution end-------------------------------------"
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "sip's_folder   source                : Exect location where you have your ZIP file exist"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+exit 1
+
+fi
+
+ 
+
+# restore $IFS
+
+IFS=$SAVEIFS
+
+########################################-----INPUT----OUTPUT------###################################################
+
+# cmd to launch : ./veronise_folder's_subfolder_files_count.sh /data/rec_cifs/Veronese/Content_Extract/data/PEDMS   (PEDMS contains below folders)
+
+#           
+
+#  Folders name                File's count in specific folder
+
+#In Process Documents TR          200256
+
+#Insight                                                                                               2725
+
+#Pharmacovigilance                                       23959
+
+#Product Change Control                             40891
+
+#RO Dossiers                                                                     942
+
+#Validation IS                                                    167
+
+#Veronese Q&C Documents                      7
+
+#eRoom Archive                                                              62103
+
+#External Laboratory                                     2762
+
+#Globalpharma Dossiers                              147
+
+########################################-----INPUT----OUTPUT------###################################################
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+veronise_folder's_subfolder_files_size.sh
+
+#!/bin/sh
+
+# Version 1.1.1
+
+#pathname=a/b/c
+
+#echo $(basename $pathname)
+
+#echo $(basename $(dirname $pathname))
+
+#echo $(basename $(dirname $(dirname $pathname)))
+
+# For taking folder name with space
+
+SAVEIFS=$IFS
+
+IFS=$(echo -en "\n\b")
+
+if [ ! -z "$1" ]; then
+
+output=`pwd`
+
+sips_folder=$1
+
+echo "---------------------------script execution start-------------------------------------"
+
+echo "Given or passed directory : $sips_folder"
+
+echo "Output report's directory : $output"
+
+echo "********************************************************************************"
+
+cd $sips_folder
+
+total_count=0
+
+for filename in `ls`; do
+
+cd "$filename"
+
+count=`find . -type f | wc -l`
+
+echo "Folder Name :" "$filename" " : $count"
+
+echo "Folder Name :" "$filename" " : $count" >>$output/"$(basename $sips_folder)_report.txt"
+
+total_count=$((total_count+count))
+
+cd $sips_folder
+
+done #for loop
+
+echo "********************************************************************************"
+
+echo "Total counts of all folders's file : $total_count"
+
+echo "---------------------------script execution end-------------------------------------"
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "sip's_folder   source                : Exect location where you have your ZIP file exist"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+exit 1
+
+fi
+
+ 
+
+# restore $IFS
+
+IFS=$SAVEIFS
+
+########################################-----INPUT----OUTPUT------###################################################
+
+# cmd to launch : ./veronise_folder's_subfolder_files_count.sh /data/rec_cifs/Veronese/Content_Extract/data/PEDMS   (PEDMS contains below folders)
+
+#           
+
+#  Folders name                File's count in specific folder
+
+#In Process Documents TR          200256
+
+#Insight                                                                                               2725
+
+#Pharmacovigilance                                       23959
+
+#Product Change Control                             40891
+
+#RO Dossiers                                                                     942
+
+#Validation IS                                                    167
+
+#Veronese Q&C Documents                      7
+
+#eRoom Archive                                                              62103
+
+#External Laboratory                                     2762
+
+#Globalpharma Dossiers                              147
+
+########################################-----INPUT----OUTPUT------###################################################
+
+----------------------------------------------------------------------------------------------------------------------------
+
+veronise_robjid_folder_size.sh
+
+#!/bin/sh
+
+# Version 1.1.1
+
+#pathname=a/b/c
+
+#echo $(basename $pathname)
+
+#echo $(basename $(dirname $pathname))
+
+#echo $(basename $(dirname $(dirname $pathname)))
+
+# For taking folder name with space
+
+SAVEIFS=$IFS
+
+IFS=$(echo -en "\n\b")
+
+if [ ! -z "$1" ]; then
+
+sips_folder=$1
+
+cd $sips_folder
+
+root=`pwd`
+
+echo "Folder directory : $sips_folder"
+
+echo "Root directory : $root"
+
+#ls -l
+
+for firstFolder in `ls`; do
+
+  firstLabel="$root"/"$firstFolder"
+
+  echo  "$firstLabel"
+
+  cd $firstLabel
+
+   for secondFolder in `ls`; do
+
+      echo  "$secondFolder"
+
+   done #first label for loop
+
+ 
+
+done #for loop
+
+ 
+
+####################################################################
+
+################## USAGE NOTES ###################################
+
+####################################################################
+
+else
+
+echo " "
+
+echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+echo " "
+
+echo "###################################################################################################################"
+
+echo " "
+
+echo "Folder  location                : Exect location where you want perform operation"
+
+echo " "
+
+echo "###################################################################################################################"
+
+        echo " "
+
+exit 1
+
+fi
+
+ 
+
+# restore $IFS
+
+IFS=$SAVEIFS
+
+--------------------------------------------------------------------------------------------------------------
+
+ingestion.script.sh
+
+#!/bin/sh
+
+# Version 1.1.1
+
+ 
+
+if [[ ! -z "$1" ]]; then
+
+ 
+
+#Variables
+
+source_folder=$1
+
+destination_folder=/data/rec/datain
+
+size_threshold=0
+
+large_sips_flag=no
+
+small_sips_flag=no
+
+ 
+
+echo " "
+
+echo "                                   ~~~~~~~ BEGIN EXECUTION ~~~~~~                                        "
+
+echo " "
+
+echo "Processing SIP ZIPs from folder  : $source_folder"
+
+echo "Injection Chain Reception folder : $destination_folder"
+
+echo "SIP ZIP size threshold           : $size_threshold"
+
+ 
+
+cd $source_folder
+
+chown presops:dmdba *.zip
+
+chmod 775 *.zip
+
+ 
+
+###################################################################
+
+##### RENAME LARGE SIPS BEFORE COPYING TO INJECTION CHAIN  ########
+
+###################################################################
+
+echo " "
+
+echo "================================================================"
+
+for FILENAME in $source_folder/*.zip
+
+    do
+
+    FILESIZE=$(stat -c%s "$FILENAME")
+
+        if [[ $FILESIZE -gt $size_threshold ]] ;then
+
+                                echo "==> Rename : $FILENAME size is $FILESIZE bytes : larger than $size_threshold."
+
+                rename .zip .large_zip $FILENAME
+
+                                large_sips_flag=yes
+
+                else
+
+                                small_sips_flag=yes
+
+        fi
+
+ 
+
+    done
+
+ 
+
+if [[ "$large_sips_flag" == "no" ]]; then
+
+                echo " "
+
+                echo "No Large SIP ZIP files (> $size_threshold bytes) found which need special handling."
+
+fi
+
+ 
+
+ 
+
+ 
+
+ 
+
+###############################################################
+
+##### COPY SMALL SIPS FIRST (directly in ZIP format)  #########
+
+###############################################################
+
+echo " "
+
+echo "================================================================"
+
+echo " "
+
+if [[ "$small_sips_flag" == "yes" ]]; then
+
+                echo "Copying SMALL SIPs directly to injection chain : "
+
+                echo " "
+
+                cp -v *.zip $destination_folder
+
+else
+
+                echo "No SMALL SIP ZIP files found."
+
+fi
+
+ 
+
+ 
+
+ 
+
+ 
+
+#############################################################
+
+##### COPY AND THEN RENAME LARGE SIP ZIP EXTENSIONS #########
+
+#############################################################
+
+echo " "
+
+echo "================================================================"
+
+echo " "
+
+if [[ "$large_sips_flag" == "yes" ]]; then
+
+                echo "Copying (renamed) LARGE SIPs to injection chain : "
+
+                echo " "
+
+ 
+
+               
+
+                for FILENAME in $source_folder/*.large_zip
+
+                do
+
+                   FILESIZE=$(stat -c%s "$FILENAME")
+
+            cp -v $FILENAME $destination_folder
+
+            cd $source_folder
+
+                    echo " "
+
+                done
+
+  cd $destination_folder
+
+               chmod 775 *.large_zip
+
+  chown presops:dmdba *.large_zip
+
+  rename .large_zip .zip *.large_zip
+
+ 
+
+                echo " "
+
+                echo "Large SIP file extensions reverted to .zip successfully in $destination_folder"
+
+ 
+
+ 
+
+ 
+
+                ##### REVERTING SOURCE FOLDER SIP ZIP EXTENSIONS #########
+
+                cd $source_folder
+
+                rename .large_zip .zip *.large_zip
+
+fi
+
+echo " "
+
+echo "                                  ~~~~~~~ END EXECUTION ~~~~~~                  "
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+##################################################################
+
+################## USAGE NOTES ###################################
+
+##################################################################
+
+else
+
+ 
+
+ 
+
+                echo " "
+
+                echo "Script could not be executed. All required parameters were NOT provided.Refer Usage below: "
+
+                echo " "
+
+                echo "###################################################################################################################"
+
+                echo " "
+
+    echo "Usage : ./preserve_mass_archiving_orchestration.sh <source_folder> <reception_folder> <sip_file_threshold_in_bytes>"
+
+                echo " "
+
+                echo "source_folder               : location where you have your SIPs for your holding. eg: /data/rec/SIP/<Holding_name>"
+
+                echo "reception_folder            : location where injection chain starts reception. usually it is /data/rec/datain"
+
+                echo "sip_file_threshold_in_bytes : SIP ZIPs bigger than this param will be copied with special care (to ensure complete copy)"
+
+                echo " "
+
+                echo "###################################################################################################################"
+
+        echo " "
+
+ 
+
+                exit 1
+
+ 
+
+fi
+
+ 
+
+Regards
+
+Mithilesh Kumar
+
+ 
