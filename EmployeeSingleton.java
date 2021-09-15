@@ -8,6 +8,9 @@ public class EmployeeSingleton implements Cloneable, Serializable {
 	private static boolean flag = false;
 
 	private EmployeeSingleton() {
+
+
+
 		if (flag) {
 			throw new RuntimeException("second time obj creation not allowed");
 		} else {
