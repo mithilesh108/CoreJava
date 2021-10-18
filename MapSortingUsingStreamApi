@@ -52,6 +52,44 @@ public class MapSortingUsingStreamApi {
 				.collect(Collectors.toMap(Entry::getKey, Map.Entry::getValue, (e5, e6) -> e1, LinkedHashMap::new));
 		System.out.println("----------------------------sort by value using id and name-----------------------------------");
 		collect2.forEach((k, v) -> System.out.println(k + " " + v));
+		//---------------------------------------------------------------------------------------------------------------------------------------
+				Comparator<Employee> comName = (o1, o2) -> o1.getName().compareTo(o2.getName());
+		Comparator<Employee> comId = (o1, o2) -> Integer.compare(o1.getId(), o2.getId());
+		Comparator<Employee> comIdName = new Comparator<Employee>() {
+			public int compare(Employee o1, Employee o2) {
+				return Integer.compare(o1.getId(), o2.getId());
+			}
+		}.thenComparing(Comparator.comparing(e -> e.getName()));
+
+		Comparator<Employee> comIdName1 = Comparator.comparing(Employee::getId).thenComparing(Comparator.comparing(e -> e.getName()));
+		Comparator<Employee> comIdName10 = Comparator.comparing(Employee::getId)
+		                                             .thenComparing(Comparator.comparing(Employee::getName)
+				                             .thenComparing(e ->e.getId()));  // to call next property first change lambda to method reference
+		Comparator<Employee> comIdName2 = Comparator.comparing(Employee::getId);
+		Comparator<Employee> comIdName11 = Comparator.comparing(e -> e.getId());
+		
+		map.forEach((k, v) -> System.out.println(k + " " + v));
+		Map<Integer, Employee> collect = map.entrySet().stream()
+				.sorted(Map.Entry.<Integer, Employee>comparingByValue(comId.thenComparing(comName)))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> k, LinkedHashMap::new));
+		System.out.println(
+				"-------------------------sort by values using id and name--------------------------------------");
+		collect.forEach((k, v) -> System.out.println(k + " " + v));
+		
+		Map<Integer, Employee> collect4 = map.entrySet().stream()
+				.sorted(Map.Entry.<Integer, Employee>comparingByValue(comIdName10))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> k, LinkedHashMap::new));
+		System.out.println(
+				"-------------------------sort by values using id and name--------------------------------------");
+		collect.forEach((k, v) -> System.out.println(k + " " + v));
+		
+		
+		Map<Integer, Employee> collect1 = map.entrySet().stream()
+				.sorted(Map.Entry.<Integer, Employee>comparingByValue(Comparator.comparing(Employee::getId).thenComparing(Comparator.comparing(e -> e.getName()))))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> k, LinkedHashMap::new));
+		System.out.println(
+				"-------------------------sort by values using id and name--------------------------------------");
+		collect1.forEach((k, v) -> System.out.println(k + " " + v));
 	}
 }
 
