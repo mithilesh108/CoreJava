@@ -1,0 +1,82 @@
+package corer.java;
+
+public class CustomArrayList<T> {
+
+	Object[] arr = null;
+	int length = 0;
+
+	public CustomArrayList() {
+		arr = new Object[10];
+		// System.out.println(Arrays.toString(arr));
+	}
+
+	public void addAt(int index, T value) {
+		if (index > length)
+			System.out.println("Index not availabe in Array");
+		else if (index == length)
+			add(value);
+		else {
+			Object temp = arr[index - 1];
+			arr[index - 1] = value;
+			for (int i = index; i <= length; i++) {
+				Object temp1 = arr[i];
+				arr[i] = temp;
+				temp = temp1;
+			}
+			length++;
+		}
+	}
+
+	public void update(int index, T newValue) {
+		if (index > length)
+			System.out.println("Index not availabe in Array");
+		else {
+			System.out.println("Array updated, old value : " + arr[index - 1] + " New value : " + newValue);
+			arr[index - 1] = newValue;
+		}
+	}
+
+	public void delete(int index) {
+		if (index > length)
+			System.out.println("Index not availabe in Array");
+		else {
+			for (int i = index - 1; i < length; i++) {
+				arr[i] = arr[i + 1];
+			}
+			length--;
+			System.out.println(index + "th Index deleted from Array");
+		}
+
+	}
+
+	public void size() {
+		System.out.println(length);
+	}
+
+	public void add(T value) {
+		if (length == 0) {
+			arr[length] = value;
+			length++;
+		} else if (length == arr.length) {
+			Object[] temp = new Object[length + 10];
+			for (int j = 0; j < length; j++)
+				temp[j] = arr[j];
+			temp[length] = value;
+			length++;
+			arr = temp;
+		} else {
+			arr[length] = value;
+			length++;
+		}
+	}
+
+	public void print() {
+		if (length == 0)
+			System.out.println("Array is empty");
+		else
+			for (int i = 0; i < length; i++)
+				System.out.print(arr[i] + " ");
+		System.out.println();
+	}
+
+}
