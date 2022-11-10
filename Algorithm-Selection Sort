@@ -1,5 +1,5 @@
 In selection sort algorithm, we search for the lowest element and arrange it to the proper location. We swap the current element with the next lowest number.
-IN every iteration of selection sort find lowest element and picked up and placed to apporporiate position. 
+IN every iteration of selection sort find the index of lowest element and picked up and placed to apporporiate position. 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 import java.util.*;
 
