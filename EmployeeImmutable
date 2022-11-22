@@ -1,26 +1,25 @@
-public final class Employee  {   
+public final class Employee {
+	private final String name;
 
-  final String pancardNumber;   
-  
-  public Employee(String pancardNumber) {    
-       this.pancardNumber=pancardNumber;    
-   }  
-   
-   public String getPancardNumber(){    
-      return pancardNumber;    
-   } 
-   
-    public String concat(String value){   
-       Employee e1 = new Employee(pancardNumber+value);
-      return e1.getPancardNumber();    
-   } 
-}    
+	Employee(String val) {
+		this.name = val;
+	}
 
+	public String getEmpName() {
+		return name;
+	}
 
-public class ImmutableDemo  {  
- public static void main(String ar[]) {  
-   Employee e = new Employee("ABC123");  
-   String s1 = e.getPancardNumber();  
-   System.out.println("Pancard Number: " + s1);  
-  }  
-}  
+	public String append(String Valu) {
+		return new Employee(name + Valu).getEmpName();
+	}
+}
+----------------------------------------------
+public class Demo {
+
+	public static void main(String[] args) {
+		Employee e = new Employee("kumar");
+		System.out.println(e.getEmpName());
+		System.out.println(e.append("mithilesh"));
+	}
+
+}
