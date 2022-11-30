@@ -4,9 +4,8 @@ package com.cts.zip;
 public class CustomSinglyLinkedList<D> {
 
 	private int size;
-	private Node<D> head;
-	private Node<D> tail;
-	
+	private Node head;
+	---------------------------------------------------------------------------------
 	public void removeAt(int index) {
 		if(index < size) {
 			Node<D> n=head;
@@ -70,81 +69,59 @@ public class CustomSinglyLinkedList<D> {
 			size++;
 		}
 	}
+	---------------------------------------------------------------------------------------------
 	
-	public void addLast(D data) {
-		Node<D> n=new Node<D>(data);
-		if(head != null) {
-			Node<D> temp=head;
-			while(temp.next != null) {
-				temp=temp.next;
-			}
-			temp.next=n;
-		}else
-			head=n;
-		size++;
-	}
-
-	public void addFirst(D data) {
-		if (head != null) {
-			Node<D> temp = head;
-			head = new Node<D>(data);
-			head.next = temp;
-		} else {
-			head = new Node<D>(data);
-			tail = head;
+	public void addFirst(T data) {
+		System.out.println("addFirst");
+		if (head == null)
+			head = new Node(data);
+		else {
+			Node newNode = new Node(data);
+			newNode.next = head;
+			head = newNode;
 		}
 		size++;
 	}
 
-	public void add(D data) {
+	public void addLast(T data) {
+		System.out.println("addlast");
 		if (head != null) {
-			Node<D> n = new Node<D>(data);
-			Node<D> temp = head;
-			while (temp.next != null) {
-				temp = temp.next;
-			}
-			temp.next = n;
-			tail = n;
-			size++;
-		} else {
-			addFirst(data);
-		}
-	}
-
-	public String toString() {
-		if (size > 0) {
-			System.out.print("[");
+			Node newNode = new Node(data);
 			Node temp = head;
-			while (temp != null) {
-				System.out.print(temp.data);
-				if (temp.next != null)
-					System.out.print(", ");
+			while (temp.next != null)
 				temp = temp.next;
-			}
-			System.out.print("]");
-		} else {
-			System.out.println("[]");
+			temp.next = newNode;
+		} else
+			head = new Node(data);
+		size++;
+	}
+
+	public void add(T data) {
+		if (head != null) {
+			addLast(data);
+		} else
+			addFirst(data);
+		size++;
+	}
+
+	@Override
+	public String toString() {
+		if (size == 0)
+			return "List is empty";
+		Node temp = head;
+		while (temp != null) {
+			System.out.print(temp.data + " ");
+			temp = temp.next;
 		}
 		return "";
 	}
 
-	public int size() {
-		return size;
-	}
+	class Node<T> {
+		private T data;
+		private Node next;
 
-	private class Node<D> {
-		private D data;
-		private Node<D> next;
-
-		Node(D data) {
+		public Node(T data) {
 			this.data = data;
-			this.next = null;
-		}
-
-		@Override
-		public String toString() {
-			return "Node [data=" + data + ", next=" + next + "]";
 		}
 	}
-	
 }
