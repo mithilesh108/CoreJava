@@ -1,10 +1,13 @@
-package com.cts.zip;
+package com.cts;
 
-
-public class CustomSinglyLinkedList<D> {
+public class SingleLinkedList<T> {
 
 	private int size;
 	private Node head;
+
+	public int size() {
+		return size;
+	}//size()
 	---------------------------------------------------------------------------------
 	public void removeAt(int index) {
 		if(index < size) {
@@ -50,29 +53,27 @@ public class CustomSinglyLinkedList<D> {
 			throw new IllegalArgumentException("There is no element found in list");
 	}
 	
-	public void addAt(int index,D data) {
-		if(index>size)
-			throw new ArrayIndexOutOfBoundsException("index : "+index+", size : "+size);
-		else if(index == 0) 
+
+	public void addAt(int index, T data) {
+		if (index > size || index < 0)
+			throw new IndexOutOfBoundsException("Index " + index + " Size " + size);
+		else if (index == 0)
 			addFirst(data);
-		else if(index == size) 
+		else if (index == size)
 			addLast(data);
 		else {
-			Node<D> n=new Node<D>(data);
-			Node<D> temp=head;
-			for(int i=0;i<index-1;i++){
-				temp=temp.next;
-			}
-			Node<D> leftNode=temp.next;
-			temp.next=n;
-			n.next=leftNode;
+			Node newNode = new Node(data);
+			Node temp = head;
+			for (int i = 1; i < index; i++) {
+				temp = temp.next;
+			}// for
+			newNode.next = temp.next;
+			temp.next = newNode;
 			size++;
-		}
-	}
-	---------------------------------------------------------------------------------------------
-	
+		}//else
+	}//addAt(-,-)
+
 	public void addFirst(T data) {
-		System.out.println("addFirst");
 		if (head == null)
 			head = new Node(data);
 		else {
@@ -81,10 +82,9 @@ public class CustomSinglyLinkedList<D> {
 			head = newNode;
 		}
 		size++;
-	}
+	}//addFirst(-)
 
 	public void addLast(T data) {
-		System.out.println("addlast");
 		if (head != null) {
 			Node newNode = new Node(data);
 			Node temp = head;
@@ -94,15 +94,14 @@ public class CustomSinglyLinkedList<D> {
 		} else
 			head = new Node(data);
 		size++;
-	}
+	}//addLast(-)
 
 	public void add(T data) {
 		if (head != null) {
 			addLast(data);
 		} else
 			addFirst(data);
-		size++;
-	}
+	}//add(-)
 
 	@Override
 	public String toString() {
@@ -118,7 +117,7 @@ public class CustomSinglyLinkedList<D> {
 
 	class Node<T> {
 		private T data;
-		private Node next;
+		private Node<T> next;
 
 		public Node(T data) {
 			this.data = data;
