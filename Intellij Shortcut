@@ -1,0 +1,2 @@
+To soft wrap a java class : ctrl+shift+A -> in Actions column search soft-wrap -> on/off
+To compare two java class : select both class -> ctrl+D
