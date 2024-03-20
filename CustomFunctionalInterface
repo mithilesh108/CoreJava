@@ -1,0 +1,12 @@
+Custom Functional Interface Example
+public class App {
+	public static void main(String[] args) {
+		Addition result = (int x, int y) -> x+y;
+		int add = result.add(2, 5);
+		System.out.println(add);
+	}
+}
+@FunctionalInterface
+interface Addition{
+	int add(int x, int y);
+}
