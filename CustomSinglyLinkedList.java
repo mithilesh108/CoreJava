@@ -74,10 +74,10 @@ public class SingleLinkedList<T> {
 	}//addAt(-,-)
 
 	public void addFirst(T data) {
+		Node newNode = new Node(data);
 		if (head == null)
-			head = new Node(data);
+			head =newNode;
 		else {
-			Node newNode = new Node(data);
 			newNode.next = head;
 			head = newNode;
 		}
@@ -85,22 +85,24 @@ public class SingleLinkedList<T> {
 	}//addFirst(-)
 
 	public void addLast(T data) {
-		if (head != null) {
-			Node newNode = new Node(data);
+		Node newNode = new Node(data);
+		if (head == null) {
+			head = newNode;
+			
+		} else {
 			Node temp = head;
 			while (temp.next != null)
 				temp = temp.next;
 			temp.next = newNode;
-		} else
-			head = new Node(data);
+		}
 		size++;
 	}//addLast(-)
 
 	public void add(T data) {
-		if (head != null) {
-			addLast(data);
-		} else
+		if (head == null) 
 			addFirst(data);
+		else
+			addLast(data);
 	}//add(-)
 
 	@Override
