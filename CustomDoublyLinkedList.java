@@ -94,25 +94,26 @@ public class CustomDoublyLinkedList<D> {
 
 	public void addLast(D data) {
 		Node<D> newNode = new Node<D>(data);
-		if (head != null) {
+		if (head == null)
+			head = tail = newNode;
+		 else {
 			newNode.prev = tail;
 			tail.next = newNode;
 			tail = newNode;
-
-		} else
-			head = tail = newNode;
+		}
 		size++;
 	}
 
 	
 	public void addFirst(D data) {
 		Node<D> newNode = new Node<D>(data);
-		if (head != null) {
+		if (head == null) 
+			head = tail = newNode;
+		else {
 			newNode.next = head;
 			head.prev = newNode;
 			head = newNode;
-		} else
-			head = tail = newNode;
+		}
 		size++;
 	}
 
