@@ -1,0 +1,30 @@
+
+public static void main(String[] args) {
+		int[] arr = {4,1,2,7,2,8,1};
+		System.out.println(Arrays.toString(arr)); // [4, 1, 2, 7, 2, 8, 1]
+		for(int i =0; i < arr.length-1; i++) {
+			for(int j =0; j < arr.length-1-i; j++) {
+				if(arr[j] > arr[j+1]) {
+//					int temp = 0;
+//					temp = arr[j];
+//					arr[j] = arr[j+1];
+//					arr[j+1] = temp ;
+					arr[j]  = arr[j]+arr[j+1];  //5
+					arr[j+1] = arr[j] - arr[j+1];// 4
+					arr[j] = arr[j] - arr[j+1];
+				}
+			}
+		}
+		System.out.println(Arrays.toString(arr)); // [1, 1, 2, 2, 4, 7, 8]
+		int[] tempArr = new int[arr.length];
+		int j =0;
+		for(int i =0; i < arr.length-1; i++) {
+			if(arr[i] != arr[i+1]) {
+				tempArr[j++] = arr[i];
+			}
+		}
+	  	tempArr[j++] = arr[arr.length-1];
+		  System.out.println(Arrays.toString(tempArr));  // [1, 2, 4, 7, 8, 0, 0]
+		  for(int k =0; k < j; k++)
+			System.out.print(tempArr[k]+" ");  //  1 2 4 7 8 
+	}
