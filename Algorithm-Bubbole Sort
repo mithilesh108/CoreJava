@@ -24,6 +24,10 @@ public static int[] bubboleSort(int[] arr){
 	                temp = arr[j];
 	                arr[j] = arr[j+1];
 	                arr[j+1] = temp;
+                        //swap without using temp value
+                        arr[j]  = arr[j]+arr[j+1];
+			arr[j+1] = arr[j] - arr[j+1];
+			arr[j] = arr[j] - arr[j+1];
 	                flag = false;
 	            }
 	        }
