@@ -1,0 +1,49 @@
+package com.java.core_java;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class Main {
+
+	public static void main(String[] args) {
+		List<Integer> list = List.of(4, 2, 66, 333, 441);
+		System.out.println(list);
+		System.out.println(integerToRoman(list));
+	}
+
+	static List<String> integerToRoman(List<Integer> list) {
+		List<String> listResult = new ArrayList<String>();
+		for (Integer num : list) {
+			String tmp = num + "";
+			int numDigits = tmp.length();
+			String res = "";
+			for (int i = 0; i < numDigits; ++i) {
+				char src = tmp.charAt(i); // orig
+				int number = (src - '0'); // convert to integer
+				int place = (numDigits - 1) - i;
+				int absolute = (int) Math.pow(10, place);
+				if (number == 9) {
+					res += roman.get(absolute);
+					res += roman.get(absolute * 10);
+				} else if (number >= 5) {
+					res += roman.get(absolute * 5);
+					res += (roman.get(absolute) + "").repeat(number - 5);
+				} else if (number == 4) {
+					res += roman.get(absolute);
+					res += roman.get(absolute * 5);
+				} else {
+					res += (roman.get(absolute) + "").repeat(number);
+				}
+			}// for
+			listResult.add(res);
+		}
+		return listResult;
+	}
+	private static HashMap<Integer, String> roman = new HashMap<>();
+	static {
+		roman.put(1, "I"); roman.put(2, "II");	roman.put(3, "III");	roman.put(4, "IV");	roman.put(5, "V");
+		roman.put(6, "VI"); roman.put(7, "VII");	roman.put(8, "VIII");	roman.put(10, "X");	roman.put(50, "L");
+		roman.put(100, "C");	roman.put(500, "D"); roman.put(1000, "M");	roman.put(5000, "G");	roman.put(10000, "H");
+	}
+}
