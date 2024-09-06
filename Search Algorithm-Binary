@@ -20,21 +20,8 @@ public class BinarySearch
 		System.out.println(recursiveImplBinarySearch(a,0,a.length-1,9));
 		
 	}
-	// Recursive implementation of Binary Search 
-	public static int recursiveImplBinarySearch(int[] a, int lb, int ub, int data){
-	   if( ub >= lb){
-	    int mid = (lb + ub) / 2;
-	    if(data == a[mid])
-	       return mid;
-	   else if(data > a[mid])
-	       return recursiveImplBinarySearch(a, mid+1, ub, data);
-	   else
-	       return recursiveImplBinarySearch(a, lb, mid-1, data);
-	   }
-	    return -1;   
-	}
-	
-	// Iterative implementation of Binary Search
+
+        // Iterative implementation of Binary Search
 	public static int iterativeImplBinarySearch(int[] a, int data){
 	     int lowerBond=0,upperBond = a.length-1,mid = 0;
 	     while(lowerBond <= upperBond){
@@ -47,6 +34,19 @@ public class BinarySearch
 	            upperBond = mid - 1;
 	     }
 	   return -1;
+	}
+	// Recursive implementation of Binary Search 
+	public static int recursiveImplBinarySearch(int[] a, int lb, int ub, int data){
+	   if( ub >= lb){
+	    int mid = (lb + ub) / 2;
+	    if(data == a[mid])
+	       return mid;
+	   else if(data > a[mid])
+	       return recursiveImplBinarySearch(a, mid+1, ub, data);
+	   else
+	       return recursiveImplBinarySearch(a, lb, mid-1, data);
+	   }
+	    return -1;   
 	}
 }
 
